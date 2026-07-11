@@ -1,5 +1,8 @@
-from sentence_transformers import SentenceTransformer
-import numpy
+from langchain_ollama import OllamaEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.docstore import InMemoryDocstore
+from langchain_core.documents import Document
+
 import faiss
 
 sentences = [
@@ -15,20 +18,35 @@ sentences = [
     "Quantum computing relies on the principles of superposition."
 ]
 
-## 모델 생성 (SentenceTransformer 모델 로드)
-model = SentenceTransformer('bert-base-nli-mean-tokens')
-
-# 문장들을 임베딩 (벡터로 변환)
-sentence_embeddings = model.encode(sentences)
-
 # 검색할 문장을 임베딩
-query_text = "I just broken my iphone screen."
-query_embeddings = model.encode([query_text])
+query_text = "내 갤럭시 디스플레이가 나갔어요."
 
-# 유사도 계산
-result = cosine_similarity(query_embeddings, sentence_embeddings)
-scores = result[0]
+# 임베딩 객체 
+embedding = OllamaEmbeddings(
+    model='embeddinggemma:latest',
+    base_url='203.230.208.82:8000'
+)
 
-# 점수 출력
-for i, s in enumerate(scores):
-    print(f"{i}. {sentences[i]}: {s}")
+# Ollama에 임베딩 요청
+test_vector = embedding.embed_query("Hello")
+d = len(test_vector)
+
+# LangChain 인터페이스로 FAISS 벡터DB 생성
+faiss_vdb = FAISS(
+    embedding_function=embedding,
+    index=faiss.IndexFlatIP(d),
+    docstore=InMemoryDocstore(),
+    index_to_docstore_id={}
+)
+
+# 벡터 DB에 문장 추가
+faiss_vdb.add_texts(sentences)
+# 벡터 DB에서 유사도 검색
+results = faiss_vdb.similarity_search_with_score(query_text, 3)
+
+# 검색결과 출력
+for r in results:
+    document = r[0]
+    score = r[1]
+    print(f"검색결과 1: {document.page_content}")
+    print(f"유사도: {score}")
