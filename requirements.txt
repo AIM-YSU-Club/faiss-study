@@ -1,7 +1,7 @@
 langchain
 langchain-ollama
-langchain-comunity
-faiss
+langchain-community
+faiss-cpu
 ollama
 sentence-transformers
 
