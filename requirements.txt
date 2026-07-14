@@ -1,0 +1,10 @@
+langchain
+langchain-ollama
+langchain-comunity
+faiss
+ollama
+sentence-transformers
+
+# Server
+fastapi[standard]
+gunicorn
