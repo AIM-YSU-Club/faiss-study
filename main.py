@@ -5,5 +5,5 @@ from fastapi import FastAPI, Request
 app = FastAPI(title = "FAISS 벡터 DB 서버")
 
 @app.get('/')
-async def  read_root()
+async def  read_root():
     return {'message' : 'server is alive'}
