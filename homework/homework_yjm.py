@@ -3,7 +3,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.docstore import InMemoryDocstore
 import faiss, os, dotenv
 
-from homework_base import sentences, get_demensions
+from homework.homework_base import sentences, get_demensions
 
 dotenv.load_dotenv()
 
